@@ -1,0 +1,115 @@
+#* General configs
+
+source ~/.profile
+bindkey -e
+
+#** Options
+
+#*** Changing directories
+
+setopt \
+    AUTO_CD \
+    CDABLE_VARS \
+    PUSHD_IGNORE_DUPS
+
+#*** History
+
+setopt \
+    HIST_IGNORE_ALL_DUPS \
+    HIST_REDUCE_BLANKS \
+    HIST_SAVE_NO_DUPS \
+    HIST_VERIFY
+
+#*** Input/Output
+
+setopt \
+    INTERACTIVE_COMMENTS
+
+#** Parameters
+
+#*** Used by the shell
+
+HISTFILE=~/.history
+HISTSIZE=9999
+SAVEHIST=9999
+
+# / is no word char ==> M-DEL in a path deletes to the next /, not the whole
+# path.
+WORDCHARS=`echo ${WORDCHARS} | tr -d '/'`
+
+#** Prompt
+
+autoload -U promptinit colors
+promptinit
+colors
+
+# A funky prompt for non-dumb terminals
+if [[ ${TERM} != "dumb" ]]; then
+    local open_p="%{$fg[blue]%}[%{$reset_color%}"
+    local close_p="%{$fg[blue]%}]%{$reset_color%}"
+    local path_p="${open_p}%~${close_p}"
+    local user_host="${open_p}%n@%m${close_p}"
+    local ret_status="${open_p}%?${close_p}"
+    local hist_no="${open_p}%h${close_p}"
+    local smiley="%(?,%{$fg[green]%}:%)%{$reset_color%},%{$fg[red]%}:(%{$reset_color%})"
+    PROMPT="╭─${user_host}─${path_p}─${ret_status}─${hist_no}
+╰─${open_p}${smiley}${close_p} %# "
+    local cur_cmd="${open_p}%_${close_p}"
+    PROMPT2="${cur_cmd}> "
+else
+    prompt off
+    # switch of the zsh line editor, cause emacs shell and TRAMP doesn't work
+    # with it.
+    unsetopt zle
+fi
+
+#** Completion
+
+# The following lines were added by compinstall
+zstyle ':completion:*' completer _expand _complete _match
+zstyle ':completion:*' format '%B%UCompleting %d...%u%b'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-prompt '%B%U%SAt %p: Hit TAB for more, or the character to insert%s%u%b'
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' match-original both
+zstyle ':completion:*' menu select=1
+zstyle ':completion:*' original true
+zstyle ':completion:*' select-prompt '%B%U%SScrolling active: current selection at %p%s%u%b'
+zstyle ':completion:*' verbose true
+zstyle :compinstall filename '/home/heimdall/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+#** Aliases
+
+alias ssh="TERM=rxvt ssh"
+alias ls="ls --color=auto"
+alias l="ls"
+alias ll="ls -l"
+alias la="ls -a"
+alias lla="ls -al"
+
+
+#** Running inside Emacs
+
+if [[ -n ${INSIDE_EMACS} ]]; then
+    # This shell runs inside an Emacs *shell* buffer.
+    prompt gentoo
+    unsetopt zle
+fi
+
+export EDITOR="emacsclient -c -n"
+export VISUAL="emacsclient -c -n"
+export ALTERNATIVE_EDITOR="emacs"
+alias e="emacsclient -c -n"
+alias es="emacs --daemon"
+alias ec="emacsclient -c -n"
+
+export PATH=${PATH}:/usr/sbin/
+# END
+
+
+export GTAGSLIBPATH=/home/overdrive/glibc/
