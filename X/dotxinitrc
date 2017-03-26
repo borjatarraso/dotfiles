@@ -1,0 +1,51 @@
+#!/bin/bash
+
+xrdb -merge .Xresources
+xsetroot -solid '#3b0039'
+setxkbmap us 
+setxkbmap -option caps:escape
+
+if [ -f ~/.xsessionrc ] ; then
+    source .xsessionrc
+fi
+
+xset b off
+xset b 0 0 0
+
+xset -b
+xset r rate 500 30
+
+xsetroot -cursor_name left_ptr
+
+# --- BEGIN for keyring ---
+# Start a D-Bus session
+source /etc/X11/xinit/xinitrc.d/30-dbus
+# Start GNOME Keyring
+eval $(/usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)
+# You probably need to do this too:
+export SSH_AUTH_SOCK
+export GPG_AGENT_INFO
+export GNOME_KEYRING_CONTROL
+export GNOME_KEYRING_PID
+# --- END for keyring ---
+
+
+if [ -x /usr/bin/xfce4-power-manager ] ; then
+   xfce4-power-manager &
+fi
+
+if [ -x /usr/bin/nm-applet ] ; then
+   nm-applet --sm-disable &
+fi
+
+if [ -x /usr/bin/autocutsel ] ; then
+    autocutsel &
+fi
+
+if [ -x /usr/bin/blueman-applet ] ; then
+   blueman-applet &
+fi
+
+xloadimage -onroot -fullscreen -border black /home/overdrive/wallpaper/2.png &
+tilda &
+exec xmonad

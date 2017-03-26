@@ -1,0 +1,18 @@
+-- TODO: how to get the same Terminus font as in xterms (.Xresources)?
+-- Config { font = "Terminus:pixelsize=7"
+Config { font = "-misc-fixed-*-*-*-*-8-*-*-*-*-*-*-*"
+       , bgColor = "#3b0039"
+       , fgColor = "#586B00"
+       , position = Static { xpos = 0, ypos = 0, width = 1600, height = 12 }
+       , lowerOnStart = True
+       , commands = [ Run Network "wlan0" ["-L","0","-H","1000","--normal","#429942","--high","#a36666"] 10
+                    , Run Cpu ["-L","3","-H","50"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Battery ["-t","<left>%/<timeleft>","-L","25","-H","50","-h","#9BB12F","-n","#FFDF38","-l","red"] 10
+                    , Run Date "%_d.%m.%Y %H:%M:%S" "date" 10
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ %cpu% | %memory% | %battery% | <fc=#788F13>%date%</fc>"
+       }
